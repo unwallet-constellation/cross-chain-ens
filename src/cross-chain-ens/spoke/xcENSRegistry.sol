@@ -3,6 +3,7 @@
 pragma solidity >=0.8.4;
 
 import "../interfaces/ENS.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import { IRouterClient } from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import { Client } from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 
@@ -14,6 +15,7 @@ contract xcENSRegistry is ENS {
     IRouterClient public router;
     uint64 public destinationChainSelector;
     address public ensHub;
+    address public feeToken;
 
     struct CCIPPayload {
         address caller;
@@ -39,9 +41,10 @@ contract xcENSRegistry is ENS {
     /**
      * @dev Constructs a new ENS registry.
      */
-    constructor(address _router, address _ensHub, uint64 _destinationChainSelector) {
+    constructor(address _router, address _feeToken, address _ensHub, uint64 _destinationChainSelector) {
         owner = msg.sender;
         router = IRouterClient(_router);
+        feeToken = _feeToken;
         ensHub = _ensHub;
         destinationChainSelector = _destinationChainSelector;
     }
@@ -63,14 +66,20 @@ contract xcENSRegistry is ENS {
             extraArgs: Client._argsToBytes(
                 Client.EVMExtraArgsV1({gasLimit: 400_000, strict: false}) // Additional arguments, setting gas limit and non-strict sequency mode
             ),
-            feeToken: address(0) // Setting feeToken to zero address, indicating native asset will be used for fees
+            feeToken: feeToken // zero address indicates native asset will be used for fees
         });
 
         // Get the fee required to send the message
         uint256 fees = router.getFee(destinationChainSelector, evm2AnyMessage);
+        uint256 native_fees = 0;
 
-        // Send the message through the router and store the returned message ID
-        messageId = router.ccipSend{value: fees}(
+        if (feeToken == address(0)) {
+            native_fees = fees;
+        } else {
+            LinkTokenInterface(feeToken).increaseApproval(address(router), fees);
+        }
+
+        messageId = router.ccipSend{value: native_fees}(
             destinationChainSelector,
             evm2AnyMessage
         );
