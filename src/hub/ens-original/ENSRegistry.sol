@@ -1,11 +1,14 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity >=0.8.4;
 
 import "../../interfaces/ENS.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 
 /**
  * The ENS registry contract.
  */
-contract ENSRegistry is ENS {
+contract ENSRegistry is ENS, Context {
     struct Record {
         address owner;
         address resolver;
@@ -18,7 +21,8 @@ contract ENSRegistry is ENS {
     // Permits modifications only by the owner of the specified node.
     modifier authorised(bytes32 node) {
         address owner = records[node].owner;
-        require(owner == msg.sender || operators[owner][msg.sender]);
+        address sender = _msgSender();
+        require(owner == sender || operators[owner][sender]);
         _;
     }
 
@@ -26,7 +30,7 @@ contract ENSRegistry is ENS {
      * @dev Constructs a new ENS registry.
      */
     constructor() public {
-        records[0x0].owner = msg.sender;
+        records[0x0].owner = _msgSender();
     }
 
     /**
@@ -41,7 +45,7 @@ contract ENSRegistry is ENS {
         address owner,
         address resolver,
         uint64 ttl
-    ) external virtual override {
+    ) public virtual override {
         setOwner(node, owner);
         _setResolverAndTTL(node, resolver, ttl);
     }
@@ -60,7 +64,7 @@ contract ENSRegistry is ENS {
         address owner,
         address resolver,
         uint64 ttl
-    ) external virtual override {
+    ) public virtual override {
         bytes32 subnode = setSubnodeOwner(node, label, owner);
         _setResolverAndTTL(subnode, resolver, ttl);
     }
@@ -130,9 +134,10 @@ contract ENSRegistry is ENS {
     function setApprovalForAll(
         address operator,
         bool approved
-    ) external virtual override {
-        operators[msg.sender][operator] = approved;
-        emit ApprovalForAll(msg.sender, operator, approved);
+    ) public virtual override {
+        address sender = _msgSender();
+        operators[sender][operator] = approved;
+        emit ApprovalForAll(sender, operator, approved);
     }
 
     /**
