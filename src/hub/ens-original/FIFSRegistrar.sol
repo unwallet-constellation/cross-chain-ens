@@ -1,11 +1,14 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity >=0.8.4;
 
 import "../../interfaces/ENS.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 
 /**
  * A registrar that allocates subdomains to the first person to claim them.
  */
-contract FIFSRegistrar {
+contract FIFSRegistrar is Context {
     ENS ens;
     bytes32 rootNode;
 
@@ -13,7 +16,7 @@ contract FIFSRegistrar {
         address currentOwner = ens.owner(
             keccak256(abi.encodePacked(rootNode, label))
         );
-        require(currentOwner == address(0x0) || currentOwner == msg.sender);
+        require(currentOwner == address(0x0) || currentOwner == _msgSender());
         _;
     }
 
