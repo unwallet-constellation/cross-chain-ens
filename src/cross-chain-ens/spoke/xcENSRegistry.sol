@@ -11,7 +11,6 @@ import { Client } from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client
  * The ENS registry contract.
  */
 contract xcENSRegistry is ENS {
-    address public owner;
     IRouterClient public router;
     uint64 public destinationChainSelector;
     address public ensHub;
@@ -42,7 +41,6 @@ contract xcENSRegistry is ENS {
      * @dev Constructs a new ENS registry.
      */
     constructor(address _router, address _feeToken, address _ensHub, uint64 _destinationChainSelector) {
-        owner = msg.sender;
         router = IRouterClient(_router);
         feeToken = _feeToken;
         ensHub = _ensHub;
@@ -293,12 +291,4 @@ contract xcENSRegistry is ENS {
     }
 
     receive() external payable {}
-
-    function withdraw(address beneficiary) public {
-        require(msg.sender == owner, "Not Authorised");
-        // Retrieve the balance of this contract
-        uint256 amount = address(this).balance;
-        // Attempt to send the funds, capturing the success status and discarding any return data
-        (bool sent, ) = beneficiary.call{value: amount}("");
-    }
 }
