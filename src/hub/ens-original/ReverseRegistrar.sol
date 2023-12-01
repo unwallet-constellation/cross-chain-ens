@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity >=0.8.4;
 
 import "../../interfaces/ENS.sol";
@@ -26,7 +28,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @dev Constructor
      * @param ensAddr The address of the ENS registry.
      */
-    constructor(ENS ensAddr) {
+    constructor(ENS ensAddr) Ownable(_msgSender()) {
         ens = ensAddr;
 
         // Assign ownership of the reverse record to our deployer
@@ -39,10 +41,11 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
     }
 
     modifier authorised(address addr) {
+        address sender = _msgSender();
         require(
-            addr == msg.sender ||
-                controllers[msg.sender] ||
-                ens.isApprovedForAll(addr, msg.sender) ||
+            addr == sender ||
+                controllers[sender] ||
+                ens.isApprovedForAll(addr, sender) ||
                 ownsContract(addr),
             "ReverseRegistrar: Caller is not a controller or authorised by address or the address itself"
         );
@@ -65,7 +68,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @return The ENS node hash of the reverse record.
      */
     function claim(address owner) public override returns (bytes32) {
-        return claimForAddr(msg.sender, owner, address(defaultResolver));
+        return claimForAddr(_msgSender(), owner, address(defaultResolver));
     }
 
     /**
@@ -101,7 +104,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
         address owner,
         address resolver
     ) public override returns (bytes32) {
-        return claimForAddr(msg.sender, owner, resolver);
+        return claimForAddr(_msgSender(), owner, resolver);
     }
 
     /**
@@ -112,10 +115,11 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @return The ENS node hash of the reverse record.
      */
     function setName(string memory name) public override returns (bytes32) {
+        address sender = _msgSender();
         return
             setNameForAddr(
-                msg.sender,
-                msg.sender,
+                sender,
+                sender,
                 address(defaultResolver),
                 name
             );
@@ -182,7 +186,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
 
     function ownsContract(address addr) internal view returns (bool) {
         try Ownable(addr).owner() returns (address owner) {
-            return owner == msg.sender;
+            return owner == _msgSender();
         } catch {
             return false;
         }
