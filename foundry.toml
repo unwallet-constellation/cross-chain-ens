@@ -6,7 +6,7 @@ remappings = [
     '@chainlink/contracts/=node_modules/@chainlink/contracts',
     '@chainlink/contracts-ccip/=node_modules/@chainlink/contracts-ccip',
 ]
-solc = '0.8.19'
+solc = '0.8.22'
 
 [rpc_endpoints]
 ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"

@@ -28,7 +28,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @dev Constructor
      * @param ensAddr The address of the ENS registry.
      */
-    constructor(ENS ensAddr) Ownable(_msgSender()) {
+    constructor(ENS ensAddr) {
         ens = ensAddr;
 
         // Assign ownership of the reverse record to our deployer
@@ -116,13 +116,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      */
     function setName(string memory name) public override returns (bytes32) {
         address sender = _msgSender();
-        return
-            setNameForAddr(
-                sender,
-                sender,
-                address(defaultResolver),
-                name
-            );
+        return setNameForAddr(sender, sender, address(defaultResolver), name);
     }
 
     /**
