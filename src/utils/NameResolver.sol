@@ -14,8 +14,8 @@ abstract contract NameResolver is INameResolver, ResolverBase {
      */
     function setName(
         bytes32 node,
-        string calldata newName
-    ) external virtual authorised(node) {
+        string memory newName
+    ) public virtual authorised(node) {
         versionable_names[recordVersions[node]][node] = newName;
         emit NameChanged(node, newName);
     }

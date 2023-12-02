@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
+import "@openzeppelin/contracts/utils/Context.sol";
 import "../../interfaces/ENS.sol";
 import "../../utils/AddrResolver.sol";
 import "../../utils/InterfaceResolver.sol";
@@ -14,6 +15,7 @@ import "../../utils/ReverseClaimer.sol";
  * address.
  */
 contract PublicResolver is
+    Context,
     Multicallable,
     AddrResolver,
     InterfaceResolver,
@@ -62,7 +64,7 @@ contract PublicResolver is
         // INameWrapper wrapperAddress,
         address _trustedETHController,
         address _trustedReverseRegistrar
-    ) ReverseClaimer(_ens, msg.sender) {
+    ) ReverseClaimer(_ens, _msgSender()) {
         ens = _ens;
         // nameWrapper = wrapperAddress;
         trustedETHController = _trustedETHController;
@@ -72,14 +74,15 @@ contract PublicResolver is
     /**
      * @dev See {IERC1155-setApprovalForAll}.
      */
-    function setApprovalForAll(address operator, bool approved) external {
+    function setApprovalForAll(address operator, bool approved) public {
+        address sender = _msgSender();
         require(
-            msg.sender != operator,
+            sender != operator,
             "ERC1155: setting approval status for self"
         );
 
-        _operatorApprovals[msg.sender][operator] = approved;
-        emit ApprovalForAll(msg.sender, operator, approved);
+        _operatorApprovals[sender][operator] = approved;
+        emit ApprovalForAll(sender, operator, approved);
     }
 
     /**
@@ -95,11 +98,12 @@ contract PublicResolver is
     /**
      * @dev Approve a delegate to be able to updated records on a node.
      */
-    function approve(bytes32 node, address delegate, bool approved) external {
-        require(msg.sender != delegate, "Setting delegate status for self");
+    function approve(bytes32 node, address delegate, bool approved) public {
+        address sender = _msgSender();
+        require(sender != delegate, "Setting delegate status for self");
 
-        _tokenApprovals[msg.sender][node][delegate] = approved;
-        emit Approved(msg.sender, node, delegate, approved);
+        _tokenApprovals[sender][node][delegate] = approved;
+        emit Approved(sender, node, delegate, approved);
     }
 
     /**
@@ -114,9 +118,10 @@ contract PublicResolver is
     }
 
     function isAuthorised(bytes32 node) internal view override returns (bool) {
+        address sender = _msgSender();
         if (
-            msg.sender == trustedETHController ||
-            msg.sender == trustedReverseRegistrar
+            sender == trustedETHController ||
+            sender == trustedReverseRegistrar
         ) {
             return true;
         }
@@ -125,9 +130,9 @@ contract PublicResolver is
         //     owner = nameWrapper.ownerOf(uint256(node));
         // }
         return
-            owner == msg.sender ||
-            isApprovedForAll(owner, msg.sender) ||
-            isApprovedFor(owner, node, msg.sender);
+            owner == sender ||
+            isApprovedForAll(owner, sender) ||
+            isApprovedFor(owner, node, sender);
     }
 
     function supportsInterface(
@@ -135,6 +140,7 @@ contract PublicResolver is
     )
         public
         view
+        virtual
         override(
             Multicallable,
             AddrResolver,

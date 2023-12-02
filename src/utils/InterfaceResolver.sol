@@ -20,7 +20,7 @@ abstract contract InterfaceResolver is IInterfaceResolver, AddrResolver {
         bytes32 node,
         bytes4 interfaceID,
         address implementer
-    ) external virtual authorised(node) {
+    ) public virtual authorised(node) {
         versionable_interfaces[recordVersions[node]][node][
             interfaceID
         ] = implementer;
