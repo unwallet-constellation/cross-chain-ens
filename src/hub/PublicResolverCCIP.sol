@@ -10,11 +10,12 @@ import "./ens-original/PublicResolver.sol";
  */
 contract PublicResolverCCIP is PublicResolver, CCIPReceiverBase {
     constructor(
+        uint256 coinType,
         ENS ensAddr, 
         address trustedController,
         address trustedReverseRegistrar,
         address router
-    ) PublicResolver(ensAddr, trustedController, trustedReverseRegistrar) CCIPReceiverBase(router) {}
+    ) AddrResolver(coinType) PublicResolver(ensAddr, trustedController, trustedReverseRegistrar) CCIPReceiverBase(router) {}
 
     function _executeFunction(bytes4 func, bytes memory params) internal override {
         if (func == bytes4(keccak256("setAddr(bytes32,uint256,bytes)"))) { 
