@@ -14,7 +14,7 @@ import "../../utils/ReverseClaimer.sol";
  * A simple resolver anyone can use; only allows the owner of a node to set its
  * address.
  */
-contract PublicResolver is
+abstract contract PublicResolver is
     Context,
     Multicallable,
     AddrResolver,
@@ -140,7 +140,7 @@ contract PublicResolver is
     )
         public
         view
-        virtual
+        virtual 
         override(
             Multicallable,
             AddrResolver,
