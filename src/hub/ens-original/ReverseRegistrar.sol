@@ -28,7 +28,7 @@ contract ReverseRegistrar is Ownable, Controllable, IReverseRegistrar {
      * @dev Constructor
      * @param ensAddr The address of the ENS registry.
      */
-    constructor(ENS ensAddr) {
+    constructor(ENS ensAddr) Ownable(msg.sender) {
         ens = ensAddr;
 
         // Assign ownership of the reverse record to our deployer
