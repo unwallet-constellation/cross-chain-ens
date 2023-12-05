@@ -7,6 +7,11 @@ import {ENSRegistryCCIP} from "../src/hub/ENSRegistryCCIP.sol";
 import {FIFSRegistrarCCIP} from "../src/hub/FIFSRegistrarCCIP.sol";
 import {ReverseRegistrarCCIP} from "../src/hub/ReverseRegistrarCCIP.sol";
 import {PublicResolverCCIP} from "../src/hub/PublicResolverCCIP.sol";
+import {xcENSRegistry} from "../src/spoke/xcENSRegistry.sol";
+import {xcFIFSRegistrar} from "../src/spoke/xcFIFSRegistrar.sol";
+import {xcReverseRegistrar} from "../src/spoke/xcReverseRegistrar.sol";
+import {xcPublicResolver} from "../src/spoke/xcPublicResolver.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 
 contract DeployHub is Script, Helper {
     address senderPublicKey;
@@ -106,7 +111,7 @@ contract DeployHub is Script, Helper {
         );
 
         string memory tld = "eth";
-        
+
         ENSRegistryCCIP registry = deploy_ENSRegistryCCIP(router);
         FIFSRegistrarCCIP registrar = deploy_FIFSRegistrarCCIP(registry, labelHash(tld), router);
         ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
@@ -117,17 +122,106 @@ contract DeployHub is Script, Helper {
 }
 
 contract DeploySpoke is Script, Helper {
-    function run(SupportedNetworks destination) external {
+    address router;
+    uint64 hubChainSelector;
+    address linkToken;
+    uint256 fundValue;
+
+    function fundAddress(address addr, uint256 value) public {
+        LinkTokenInterface(linkToken).transfer(addr, value);
+    }
+
+    function deploy_ENSRegistry(address registryHub) public returns (xcENSRegistry registry) {
+        registry = new xcENSRegistry(
+            router,
+            hubChainSelector,
+            registryHub,
+            linkToken
+        );
+
+        console.log(
+            "xcENSRegistry deployed with address: ",
+            address(registry)
+        );
+
+        fundAddress(address(registry), fundValue);
+    }
+
+    function deploy_FIFSRegistrar(address registrarHub) public returns (xcFIFSRegistrar registrar) {
+        registrar = new xcFIFSRegistrar(
+            router,
+            hubChainSelector,
+            registrarHub,
+            linkToken
+        );
+
+        console.log(
+            "xcFIFSRegistrar deployed with address: ",
+            address(registrar)
+        );
+
+        fundAddress(address(registrar), fundValue);
+    }
+
+    function deploy_ReverseRegistrar(address reverseRegistarHub) public returns (xcReverseRegistrar reverseRegistar) {
+        reverseRegistar = new xcReverseRegistrar(
+            router,
+            hubChainSelector,
+            reverseRegistarHub,
+            linkToken
+        );
+
+        console.log(
+            "xcReverseRegistrar deployed with address: ",
+            address(reverseRegistar)
+        );
+
+        fundAddress(address(reverseRegistar), fundValue);
+    }
+
+    function deploy_PublicResolver(address publicResolverHub, uint256 coinType) public returns (xcPublicResolver publicResolver) {
+        publicResolver = new xcPublicResolver(
+            coinType,
+            router,
+            hubChainSelector,
+            publicResolverHub,
+            linkToken
+        );
+
+        console.log(
+            "xcPublicResolver deployed with address: ",
+            address(publicResolver)
+        );
+
+        fundAddress(address(publicResolver), fundValue);
+    }
+
+    function run(SupportedNetworks destination, SupportedNetworks hub) external {
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
+        fundValue = 1 ether; // v.envOr("FUND_VALUE", 1 ether);
+
         vm.startBroadcast(senderPrivateKey);
 
-        (address router, , , ) = getConfigFromNetwork(destination);
+        (router, linkToken, , ) = getConfigFromNetwork(destination);
         console.log(
             "Deploying contracts on spoke chain: ",
             networks[destination]
         );
 
-        // TODO @realnimish
+        ( , , , hubChainSelector) = getConfigFromNetwork(hub);
+
+        address registryHub = vm.envAddress("REGISTRY_HUB");
+        xcENSRegistry registry = deploy_ENSRegistry(registryHub);
+
+        address registrarHub = vm.envAddress("REGISTRAR_HUB");
+        xcFIFSRegistrar registrar = deploy_FIFSRegistrar(registrarHub);
+
+        address reverseRegistarHub = vm.envAddress("REVERSE_REGISTRAR_HUB");
+        xcReverseRegistrar reverseRegistrar = deploy_ReverseRegistrar(reverseRegistarHub);
+
+        address publicResolverHub = vm.envAddress("RESOLVER_HUB");
+        uint256 coinType = 1; // vm.envOr("COIN_ID", 1);
+        xcPublicResolver resolver = deploy_PublicResolver(publicResolverHub, coinType);
 
         vm.stopBroadcast();
     }
