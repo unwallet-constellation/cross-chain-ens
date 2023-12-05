@@ -12,10 +12,7 @@ abstract contract NameResolver is INameResolver, ResolverBase {
      * May only be called by the owner of that node in the ENS registry.
      * @param node The node to update.
      */
-    function setName(
-        bytes32 node,
-        string memory newName
-    ) public virtual authorised(node) {
+    function setName(bytes32 node, string memory newName) public virtual authorised(node) {
         versionable_names[recordVersions[node]][node] = newName;
         emit NameChanged(node, newName);
     }
@@ -26,17 +23,11 @@ abstract contract NameResolver is INameResolver, ResolverBase {
      * @param node The ENS node to query.
      * @return The associated name.
      */
-    function name(
-        bytes32 node
-    ) external view virtual override returns (string memory) {
+    function name(bytes32 node) external view virtual override returns (string memory) {
         return versionable_names[recordVersions[node]][node];
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(INameResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(INameResolver).interfaceId || super.supportsInterface(interfaceID);
     }
 }

@@ -10,81 +10,51 @@ bytes32 constant ADDR_REVERSE_NODE = 0x91d1777781884d03a6757a803996e38de2a42967f
 
 // @task: Expose other functions as well (if required)
 contract xcReverseRegistrar is CCIPSenderBase, IReverseRegistrar {
-
-    constructor(address _router, uint64 _destinationChainSelector, address _receiverAddress, address _feeToken) 
-        CCIPSenderBase(_router, _destinationChainSelector, _receiverAddress, _feeToken) {}
+    constructor(address _router, uint64 _destinationChainSelector, address _receiverAddress, address _feeToken)
+        CCIPSenderBase(_router, _destinationChainSelector, _receiverAddress, _feeToken)
+    {}
 
     receive() external payable {}
 
     function setDefaultResolver(address resolver) external {
-        _sendMessage(
-            this.setDefaultResolver.selector,
-            abi.encode(resolver)
-        );
+        _sendMessage(this.setDefaultResolver.selector, abi.encode(resolver));
     }
 
     function claim(address owner) external returns (bytes32) {
-        _sendMessage(
-            this.claim.selector,
-            abi.encode(owner)
-        );
+        _sendMessage(this.claim.selector, abi.encode(owner));
 
         return node(msg.sender);
     }
 
-    function claimForAddr(
-        address addr,
-        address owner,
-        address resolver
-    ) external returns (bytes32) {
-        _sendMessage(
-            this.claimForAddr.selector,
-            abi.encode(addr, owner, resolver)
-        );
+    function claimForAddr(address addr, address owner, address resolver) external returns (bytes32) {
+        _sendMessage(this.claimForAddr.selector, abi.encode(addr, owner, resolver));
 
         return node(addr);
     }
 
-    function claimWithResolver(
-        address owner,
-        address resolver
-    ) external returns (bytes32) {
-        _sendMessage(
-            this.claimWithResolver.selector,
-            abi.encode(owner, resolver)
-        );
+    function claimWithResolver(address owner, address resolver) external returns (bytes32) {
+        _sendMessage(this.claimWithResolver.selector, abi.encode(owner, resolver));
 
         return node(msg.sender);
     }
 
     function setName(string memory name) external returns (bytes32) {
-        _sendMessage(
-            this.setName.selector,
-            abi.encode(name)
-        );
+        _sendMessage(this.setName.selector, abi.encode(name));
 
         return node(msg.sender);
     }
 
-    function setNameForAddr(
-        address addr,
-        address owner,
-        address resolver,
-        string memory name
-    ) external returns (bytes32) {
-        _sendMessage(
-            this.setNameForAddr.selector,
-            abi.encode(addr, owner, resolver, name)
-        );
+    function setNameForAddr(address addr, address owner, address resolver, string memory name)
+        external
+        returns (bytes32)
+    {
+        _sendMessage(this.setNameForAddr.selector, abi.encode(addr, owner, resolver, name));
 
         return node(addr);
     }
 
     function node(address addr) public pure returns (bytes32) {
-        return
-            keccak256(
-                abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr))
-            );
+        return keccak256(abi.encodePacked(ADDR_REVERSE_NODE, sha3HexAddress(addr)));
     }
 
     /**
@@ -96,11 +66,7 @@ contract xcReverseRegistrar is CCIPSenderBase, IReverseRegistrar {
      */
     function sha3HexAddress(address addr) private pure returns (bytes32 ret) {
         assembly {
-            for {
-                let i := 40
-            } gt(i, 0) {
-
-            } {
+            for { let i := 40 } gt(i, 0) {} {
                 i := sub(i, 1)
                 mstore8(i, byte(and(addr, 0xf), lookup))
                 addr := div(addr, 0x10)

@@ -11,14 +11,18 @@ import "./ens-original/PublicResolver.sol";
 contract PublicResolverCCIP is PublicResolver, CCIPReceiverBase {
     constructor(
         uint256 coinType,
-        ENS ensAddr, 
+        ENS ensAddr,
         address trustedController,
         address trustedReverseRegistrar,
         address router
-    ) AddrResolver(coinType) PublicResolver(ensAddr, trustedController, trustedReverseRegistrar) CCIPReceiverBase(router) {}
+    )
+        AddrResolver(coinType)
+        PublicResolver(ensAddr, trustedController, trustedReverseRegistrar)
+        CCIPReceiverBase(router)
+    {}
 
     function _executeFunction(bytes4 func, bytes memory params) internal override {
-        if (func == bytes4(keccak256("setAddr(bytes32,uint256,bytes)"))) { 
+        if (func == bytes4(keccak256("setAddr(bytes32,uint256,bytes)"))) {
             // https://github.com/ethereum/solidity/issues/3556
             (bytes32 node, uint256 coinType, bytes memory a) = abi.decode(params, (bytes32, uint256, bytes));
             setAddr(node, coinType, a);
@@ -37,7 +41,7 @@ contract PublicResolverCCIP is PublicResolver, CCIPReceiverBase {
         } else if (func == this.clearRecords.selector) {
             bytes32 node = abi.decode(params, (bytes32));
             clearRecords(node);
-        } else if (func == this.multicall.selector) { 
+        } else if (func == this.multicall.selector) {
             // @dev: Non-trivial conversion required from calldata to memory
             // bytes[] memory data = abi.decode(params, (bytes[]));
             // multicall(data);
@@ -61,8 +65,6 @@ contract PublicResolverCCIP is PublicResolver, CCIPReceiverBase {
     }
 
     function supportsInterface(bytes4 interfaceId) public view override(CCIPReceiver, PublicResolver) returns (bool) {
-        return 
-            CCIPReceiver.supportsInterface(interfaceId) ||
-            PublicResolver.supportsInterface(interfaceId);
+        return CCIPReceiver.supportsInterface(interfaceId) || PublicResolver.supportsInterface(interfaceId);
     }
 }

@@ -15,27 +15,28 @@ contract ReverseRegistrarCCIP is ReverseRegistrar, CCIPReceiverBase {
         if (func == this.claim.selector) {
             address owner = abi.decode(params, (address));
             claim(owner);
-        } else if(func == this.claimForAddr.selector) {
+        } else if (func == this.claimForAddr.selector) {
             (address addr, address owner, address resolver) = abi.decode(params, (address, address, address));
             claimForAddr(addr, owner, resolver);
-        } else if(func == this.claimWithResolver.selector) {
+        } else if (func == this.claimWithResolver.selector) {
             (address owner, address resolver) = abi.decode(params, (address, address));
             claimWithResolver(owner, resolver);
-        } else if(func == this.renounceOwnership.selector) {
+        } else if (func == this.renounceOwnership.selector) {
             renounceOwnership();
-        } else if(func == this.setController.selector) {
+        } else if (func == this.setController.selector) {
             (address controller, bool enabled) = abi.decode(params, (address, bool));
             setController(controller, enabled);
-        } else if(func == this.setDefaultResolver.selector) {
+        } else if (func == this.setDefaultResolver.selector) {
             address resolver = abi.decode(params, (address));
             setDefaultResolver(resolver);
-        } else if(func == this.setName.selector) {
+        } else if (func == this.setName.selector) {
             string memory name = abi.decode(params, (string));
             setName(name);
-        } else if(func == this.setNameForAddr.selector) {
-            (address addr, address owner, address resolver, string memory name) = abi.decode(params, (address, address, address, string));
+        } else if (func == this.setNameForAddr.selector) {
+            (address addr, address owner, address resolver, string memory name) =
+                abi.decode(params, (address, address, address, string));
             setNameForAddr(addr, owner, resolver, name);
-        } else if(func == this.transferOwnership.selector) {
+        } else if (func == this.transferOwnership.selector) {
             address newOwner = abi.decode(params, (address));
             transferOwnership(newOwner);
         } else {

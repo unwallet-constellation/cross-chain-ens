@@ -5,11 +5,7 @@ import "./ResolverBase.sol";
 import "../interfaces/IAddrResolver.sol";
 import "../interfaces/IAddressResolver.sol";
 
-abstract contract AddrResolver is
-    IAddrResolver,
-    IAddressResolver,
-    ResolverBase
-{
+abstract contract AddrResolver is IAddrResolver, IAddressResolver, ResolverBase {
     uint256 private immutable COIN_TYPE;
 
     mapping(uint64 => mapping(bytes32 => mapping(uint256 => bytes))) versionable_addresses;
@@ -24,10 +20,7 @@ abstract contract AddrResolver is
      * @param node The node to update.
      * @param a The address to set.
      */
-    function setAddr(
-        bytes32 node,
-        address a
-    ) external virtual authorised(node) {
+    function setAddr(bytes32 node, address a) external virtual authorised(node) {
         setAddr(node, COIN_TYPE, addressToBytes(a));
     }
 
@@ -36,9 +29,7 @@ abstract contract AddrResolver is
      * @param node The ENS node to query.
      * @return The associated address.
      */
-    function addr(
-        bytes32 node
-    ) public view virtual override returns (address payable) {
+    function addr(bytes32 node) public view virtual override returns (address payable) {
         bytes memory a = addr(node, COIN_TYPE);
         if (a.length == 0) {
             return payable(0);
@@ -46,11 +37,7 @@ abstract contract AddrResolver is
         return bytesToAddress(a);
     }
 
-    function setAddr(
-        bytes32 node,
-        uint256 coinType,
-        bytes memory a
-    ) public virtual authorised(node) {
+    function setAddr(bytes32 node, uint256 coinType, bytes memory a) public virtual authorised(node) {
         emit AddressChanged(node, coinType, a);
         if (coinType == COIN_TYPE) {
             emit AddrChanged(node, bytesToAddress(a));
@@ -58,25 +45,16 @@ abstract contract AddrResolver is
         versionable_addresses[recordVersions[node]][node][coinType] = a;
     }
 
-    function addr(
-        bytes32 node,
-        uint256 coinType
-    ) public view virtual override returns (bytes memory) {
+    function addr(bytes32 node, uint256 coinType) public view virtual override returns (bytes memory) {
         return versionable_addresses[recordVersions[node]][node][coinType];
     }
 
-    function supportsInterface(
-        bytes4 interfaceID
-    ) public view virtual override returns (bool) {
-        return
-            interfaceID == type(IAddrResolver).interfaceId ||
-            interfaceID == type(IAddressResolver).interfaceId ||
-            super.supportsInterface(interfaceID);
+    function supportsInterface(bytes4 interfaceID) public view virtual override returns (bool) {
+        return interfaceID == type(IAddrResolver).interfaceId || interfaceID == type(IAddressResolver).interfaceId
+            || super.supportsInterface(interfaceID);
     }
 
-    function bytesToAddress(
-        bytes memory b
-    ) internal pure returns (address payable a) {
+    function bytesToAddress(bytes memory b) internal pure returns (address payable a) {
         require(b.length == 20);
         assembly {
             a := div(mload(add(b, 32)), exp(256, 12))

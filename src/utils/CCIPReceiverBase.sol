@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 // import { CCIPReceiver } from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
-import { CCIPReceiver } from "./CCIPReceiverPatch.sol";
-import { Client } from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
+import {CCIPReceiver} from "./CCIPReceiverPatch.sol";
+import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 
 // todo: Make it Ownable so that whitelist feature could be implemented
 abstract contract CCIPReceiverBase is Context, CCIPReceiver {
@@ -27,9 +27,11 @@ abstract contract CCIPReceiverBase is Context, CCIPReceiver {
 
     constructor(address _router) CCIPReceiver(_router) {}
 
-    function _ccipReceive(
-        Client.Any2EVMMessage memory _any2EvmMessage
-    ) internal override authenticateCCIP(_any2EvmMessage){
+    function _ccipReceive(Client.Any2EVMMessage memory _any2EvmMessage)
+        internal
+        override
+        authenticateCCIP(_any2EvmMessage)
+    {
         CCIPPayload memory ccipPayload = abi.decode(_any2EvmMessage.data, (CCIPPayload));
 
         _setMsgSender(ccipPayload.caller);

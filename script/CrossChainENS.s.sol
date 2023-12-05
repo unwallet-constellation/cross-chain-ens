@@ -14,7 +14,7 @@ import {xcPublicResolver} from "../src/spoke/xcPublicResolver.sol";
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 
 contract DeployHub is Script, Helper {
-    address senderPublicKey;
+    address internal senderPublicKey;
 
     function labelHash(string memory label) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(label));
@@ -28,74 +28,44 @@ contract DeployHub is Script, Helper {
         return keccak256(abi.encodePacked(node, labelHash(label)));
     }
 
-    function deploy_ENSRegistryCCIP(address router) internal returns(ENSRegistryCCIP registry) {
+    function deploy_ENSRegistryCCIP(address router) internal returns (ENSRegistryCCIP registry) {
         registry = new ENSRegistryCCIP(router);
-        console.log(
-            "ENSRegistryCCIP deployed with address: ",
-            address(registry)
-        );
+        console.log("ENSRegistryCCIP deployed with address: ", address(registry));
     }
 
-    function deploy_FIFSRegistrarCCIP(
-        ENSRegistryCCIP registry, 
-        bytes32 labelhash, 
-        address router
-    ) internal returns(FIFSRegistrarCCIP registrar) {
-        registrar = new FIFSRegistrarCCIP(
-            registry,
-            labelhash,
-            router
-        );
+    function deploy_FIFSRegistrarCCIP(ENSRegistryCCIP registry, bytes32 labelhash, address router)
+        internal
+        returns (FIFSRegistrarCCIP registrar)
+    {
+        registrar = new FIFSRegistrarCCIP(registry, labelhash, router);
 
         registry.setSubnodeOwner(0x00, labelhash, address(registrar));
 
-        console.log(
-            "FIFSRegistrarCCIP deployed with address: ",
-            address(registrar)
-        );
+        console.log("FIFSRegistrarCCIP deployed with address: ", address(registrar));
     }
 
-    function deploy_ReverseRegistrarCCIP(
-        ENSRegistryCCIP registry,
-        address router 
-    ) internal returns (ReverseRegistrarCCIP reverseRegistrar) {
-        reverseRegistrar = new ReverseRegistrarCCIP(
-            registry,
-            router
-        );
+    function deploy_ReverseRegistrarCCIP(ENSRegistryCCIP registry, address router)
+        internal
+        returns (ReverseRegistrarCCIP reverseRegistrar)
+    {
+        reverseRegistrar = new ReverseRegistrarCCIP(registry, router);
 
         registry.setSubnodeOwner(0x00, labelHash("reverse"), senderPublicKey);
-        registry.setSubnodeOwner(
-            namehash("reverse"), 
-            labelHash("addr"), 
-            address(reverseRegistrar)
-        );
+        registry.setSubnodeOwner(namehash("reverse"), labelHash("addr"), address(reverseRegistrar));
 
-        console.log(
-            "ReverseRegistrarCCIP deployed with address: ",
-            address(reverseRegistrar)
-        );
+        console.log("ReverseRegistrarCCIP deployed with address: ", address(reverseRegistrar));
     }
 
     function deploy_PublicResolverCCIP(
         uint256 coinType,
-        ENSRegistryCCIP ensAddr, 
+        ENSRegistryCCIP ensAddr,
         address trustedController,
         address trustedReverseRegistrar,
         address router
     ) internal returns (PublicResolverCCIP resolver) {
-        resolver = new PublicResolverCCIP(
-            coinType,
-            ensAddr, 
-            trustedController,
-            trustedReverseRegistrar,
-            router
-        );
+        resolver = new PublicResolverCCIP(coinType, ensAddr, trustedController, trustedReverseRegistrar, router);
 
-        console.log(
-            "PublicResolverCCIP deployed with address: ",
-            address(resolver)
-        );
+        console.log("PublicResolverCCIP deployed with address: ", address(resolver));
     }
 
     function run(SupportedNetworks destination) external {
@@ -104,94 +74,64 @@ contract DeployHub is Script, Helper {
 
         vm.startBroadcast(senderPrivateKey);
 
-        (address router, , , ) = getConfigFromNetwork(destination);
-        console.log(
-            "Deploying contracts on hub chain: ",
-            networks[destination]
-        );
+        (address router,,,) = getConfigFromNetwork(destination);
+        console.log("Deploying contracts on hub chain: ", networks[destination]);
 
         string memory tld = "eth";
 
         ENSRegistryCCIP registry = deploy_ENSRegistryCCIP(router);
+        // solhint-disable-next-line no-unused-vars
         FIFSRegistrarCCIP registrar = deploy_FIFSRegistrarCCIP(registry, labelHash(tld), router);
         ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
-        PublicResolverCCIP resolver = deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
+        // solhint-disable-next-line no-unused-vars
+        PublicResolverCCIP resolver =
+            deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
 
         vm.stopBroadcast();
     }
 }
 
 contract DeploySpoke is Script, Helper {
-    address router;
-    uint64 hubChainSelector;
-    address linkToken;
-    uint256 fundValue;
+    address internal router;
+    uint64 internal hubChainSelector;
+    address internal linkToken;
+    uint256 internal fundValue;
 
     function fundAddress(address addr, uint256 value) public {
         LinkTokenInterface(linkToken).transfer(addr, value);
     }
 
     function deploy_ENSRegistry(address registryHub) public returns (xcENSRegistry registry) {
-        registry = new xcENSRegistry(
-            router,
-            hubChainSelector,
-            registryHub,
-            linkToken
-        );
+        registry = new xcENSRegistry(router, hubChainSelector, registryHub, linkToken);
 
-        console.log(
-            "xcENSRegistry deployed with address: ",
-            address(registry)
-        );
+        console.log("xcENSRegistry deployed with address: ", address(registry));
 
         fundAddress(address(registry), fundValue);
     }
 
     function deploy_FIFSRegistrar(address registrarHub) public returns (xcFIFSRegistrar registrar) {
-        registrar = new xcFIFSRegistrar(
-            router,
-            hubChainSelector,
-            registrarHub,
-            linkToken
-        );
+        registrar = new xcFIFSRegistrar(router, hubChainSelector, registrarHub, linkToken);
 
-        console.log(
-            "xcFIFSRegistrar deployed with address: ",
-            address(registrar)
-        );
+        console.log("xcFIFSRegistrar deployed with address: ", address(registrar));
 
         fundAddress(address(registrar), fundValue);
     }
 
     function deploy_ReverseRegistrar(address reverseRegistarHub) public returns (xcReverseRegistrar reverseRegistar) {
-        reverseRegistar = new xcReverseRegistrar(
-            router,
-            hubChainSelector,
-            reverseRegistarHub,
-            linkToken
-        );
+        reverseRegistar = new xcReverseRegistrar(router, hubChainSelector, reverseRegistarHub, linkToken);
 
-        console.log(
-            "xcReverseRegistrar deployed with address: ",
-            address(reverseRegistar)
-        );
+        console.log("xcReverseRegistrar deployed with address: ", address(reverseRegistar));
 
         fundAddress(address(reverseRegistar), fundValue);
     }
 
-    function deploy_PublicResolver(address publicResolverHub, uint256 coinType) public returns (xcPublicResolver publicResolver) {
-        publicResolver = new xcPublicResolver(
-            coinType,
-            router,
-            hubChainSelector,
-            publicResolverHub,
-            linkToken
-        );
+    function deploy_PublicResolver(address publicResolverHub, uint256 coinType)
+        public
+        returns (xcPublicResolver publicResolver)
+    {
+        publicResolver = new xcPublicResolver(coinType, router, hubChainSelector, publicResolverHub, linkToken);
 
-        console.log(
-            "xcPublicResolver deployed with address: ",
-            address(publicResolver)
-        );
+        console.log("xcPublicResolver deployed with address: ", address(publicResolver));
 
         fundAddress(address(publicResolver), fundValue);
     }
@@ -202,25 +142,27 @@ contract DeploySpoke is Script, Helper {
 
         vm.startBroadcast(senderPrivateKey);
 
-        (router, linkToken, , ) = getConfigFromNetwork(destination);
-        console.log(
-            "Deploying contracts on spoke chain: ",
-            networks[destination]
-        );
+        (router, linkToken,,) = getConfigFromNetwork(destination);
+        console.log("Deploying contracts on spoke chain: ", networks[destination]);
 
-        ( , , , hubChainSelector) = getConfigFromNetwork(hub);
+        (,,, hubChainSelector) = getConfigFromNetwork(hub);
 
         address registryHub = vm.envAddress("REGISTRY_HUB");
+
+        // solhint-disable-next-line no-unused-vars
         xcENSRegistry registry = deploy_ENSRegistry(registryHub);
 
         address registrarHub = vm.envAddress("REGISTRAR_HUB");
+        // solhint-disable-next-line no-unused-vars
         xcFIFSRegistrar registrar = deploy_FIFSRegistrar(registrarHub);
 
         address reverseRegistarHub = vm.envAddress("REVERSE_REGISTRAR_HUB");
+        // solhint-disable-next-line no-unused-vars
         xcReverseRegistrar reverseRegistrar = deploy_ReverseRegistrar(reverseRegistarHub);
 
         address publicResolverHub = vm.envAddress("RESOLVER_HUB");
         uint256 coinType = 1; // vm.envOr("COIN_ID", 1);
+        // solhint-disable-next-line no-unused-vars
         xcPublicResolver resolver = deploy_PublicResolver(publicResolverHub, coinType);
 
         vm.stopBroadcast();

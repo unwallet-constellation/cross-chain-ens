@@ -1,0 +1,22 @@
+{
+  "search.exclude": {
+    "/lib/**": true
+  },
+  "search.useIgnoreFiles": true,
+  "search.useGlobalIgnoreFiles": true,
+  "search.useParentIgnoreFiles": true,
+  "files.associations": {
+    ".env.*": "dotenv",
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+  },
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  "solidity.formatter": "forge",
+  "solidity.linter": "solhint",
+  "solidity.compileUsingRemoteVersion": "v0.8.22",
+  "solidity.enabledAsYouTypeCompilationErrorCheck": false,
+}
