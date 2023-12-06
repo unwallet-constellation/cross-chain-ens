@@ -68,16 +68,16 @@ contract DeployHub is Script, Helper {
         console.log("PublicResolverCCIP deployed with address: ", address(resolver));
     }
 
-    function run(SupportedNetworks destination) external {
+    function run(uint64 destination) external {
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
         senderPublicKey = vm.addr(senderPrivateKey);
 
         vm.startBroadcast(senderPrivateKey);
 
         (address router,,,) = getConfigFromNetwork(destination);
-        console.log("Deploying contracts on hub chain: ", networks[destination]);
+        console.log("Deploying contracts on hub chain: ", destination);
 
-        string memory tld = "eth";
+        string memory tld = "unwallet";
 
         ENSRegistryCCIP registry = deploy_ENSRegistryCCIP(router);
         // solhint-disable-next-line no-unused-vars
@@ -136,32 +136,35 @@ contract DeploySpoke is Script, Helper {
         fundAddress(address(publicResolver), fundValue);
     }
 
-    function run(SupportedNetworks destination, SupportedNetworks hub) external {
+    function run(uint64 destination, uint64 hub) external {
         uint256 senderPrivateKey = vm.envUint("PRIVATE_KEY");
-        fundValue = 1 ether; // v.envOr("FUND_VALUE", 1 ether);
+        fundValue = 1 ether; // vm.envOr("SPOKE_FUND_VALUE", 1 ether);
 
         vm.startBroadcast(senderPrivateKey);
 
         (router, linkToken,,) = getConfigFromNetwork(destination);
-        console.log("Deploying contracts on spoke chain: ", networks[destination]);
+        console.log("Deploying contracts on spoke chain: ", destination);
 
         (,,, hubChainSelector) = getConfigFromNetwork(hub);
 
-        address registryHub = vm.envAddress("REGISTRY_HUB");
-
+        address registryHub = vm.envAddress("ENSRegistryCCIP");
+        console.log("Using ENSRegistryCCIP: ", registryHub);
         // solhint-disable-next-line no-unused-vars
         xcENSRegistry registry = deploy_ENSRegistry(registryHub);
 
-        address registrarHub = vm.envAddress("REGISTRAR_HUB");
+        address registrarHub = vm.envAddress("FIFSRegistrarCCIP");
+        console.log("Using FIFSRegistrarCCIP: ", registrarHub);
         // solhint-disable-next-line no-unused-vars
         xcFIFSRegistrar registrar = deploy_FIFSRegistrar(registrarHub);
 
-        address reverseRegistarHub = vm.envAddress("REVERSE_REGISTRAR_HUB");
+        address reverseRegistarHub = vm.envAddress("ReverseRegistrarCCIP");
+        console.log("Using ReverseRegistrarCCIP: ", reverseRegistarHub);
         // solhint-disable-next-line no-unused-vars
         xcReverseRegistrar reverseRegistrar = deploy_ReverseRegistrar(reverseRegistarHub);
 
-        address publicResolverHub = vm.envAddress("RESOLVER_HUB");
-        uint256 coinType = 1; // vm.envOr("COIN_ID", 1);
+        address publicResolverHub = vm.envAddress("PublicResolverCCIP");
+        console.log("Using PublicResolverCCIP: ", publicResolverHub);
+        uint256 coinType = 1; // vm.envOr("SPOKE_RESOLVER_COIN_TYPE", 1);
         // solhint-disable-next-line no-unused-vars
         xcPublicResolver resolver = deploy_PublicResolver(publicResolverHub, coinType);
 

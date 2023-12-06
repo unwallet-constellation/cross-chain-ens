@@ -76,18 +76,16 @@ So, if you want to pay for Chainlink CCIP fees in LINK token, you will pass `1 (
 
 ### Deploy
 
-To deploy the cross-chain ENS smart contracts to the hub chain (_Avalanche Fuji_ in this example), run:
-
-```shell
-forge script ./script/CrossChainENS.s.sol:DeployHub -vvv --broadcast --rpc-url avalancheFuji --sig "run(uint8)" -- 2
-```
-
-To deploy the respective contracts to the spoke chains (_Polygon Mumbai_ and _Optimism Goerli_ in this example), run:
-
-```shell
-forge script ./script/CrossChainENS.s.sol:DeploySpoke -vvv --broadcast --rpc-url polygonMumbai --sig "run(uint8, uint8)" -- 4 2
-forge script ./script/CrossChainENS.s.sol:DeploySpoke -vvv --broadcast --rpc-url optimismGoerli --sig "run(uint8, uint8)" -- 1 2
-```
-
 > [!IMPORTANT]  
-> Make sure to claim `LINK` tokens from the [faucet](https://docs.chain.link/resources/link-token-contracts?parent=ccip) on the respective spoke chain with deployer account before deploying the contracts.
+> Make sure to claim testnet gas from all respective chains and `LINK` tokens from this [faucet](https://docs.chain.link/resources/link-token-contracts?parent=ccip) on the respective spoke chains with your deployer account first.
+
+To deploy the full cross-chain ENS protocol (hub & spokes), run the following command:
+
+```shell
+./deploy.sh
+
+# Only output contract addresses from a previous deployment
+./deploy.sh --dry-run
+```
+
+It uses `./script/Deploy.s.sol` via the `forge script` command. See the file for more details and for configuring chains.

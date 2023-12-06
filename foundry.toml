@@ -8,6 +8,8 @@ remappings = [
 ]
 solc = '0.8.22'
 
+fs_permissions = [{ access = "read", path = "./" }]
+
 [rpc_endpoints]
 ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"
 optimismGoerli = "${OPTIMISM_GOERLI_RPC_URL}"
