@@ -76,7 +76,7 @@ So, if you want to pay for Chainlink CCIP fees in LINK token, you will pass `1 (
 
 ### Deploy
 
-> [!IMPORTANT]  
+> [!INFO]  
 > Make sure to claim testnet gas from all respective chains and `LINK` tokens from this [faucet](https://docs.chain.link/resources/link-token-contracts?parent=ccip) on the respective spoke chains with your deployer account first.
 
 To deploy the full cross-chain ENS protocol (hub & spokes), run the following command:
@@ -87,5 +87,8 @@ To deploy the full cross-chain ENS protocol (hub & spokes), run the following co
 # Only output contract addresses from a previous deployment
 ./deploy.sh --dry-run
 ```
+
+> [!IMPORTANT]  
+> The script requires bash version 4.0 or higher and the `jq` command line tool. On macOs, it's recommended to install both via [Homebrew](https://brew.sh/).
 
 It uses `./script/Deploy.s.sol` via the `forge script` command. See the file for more details and for configuring chains.
