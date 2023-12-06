@@ -78,3 +78,31 @@ contract RegisterName is Script, Helper {
         }
     }
 }
+
+contract RegisterNameWithString is RegisterName {
+    function _evalNode(string memory name) internal returns (bytes32) {
+        string memory defaultTld = "unwallet";
+        string memory tld = vm.envOr("TLD", defaultTld);
+        return namehash(namehash(tld), name);
+    }
+
+    function setAddr(address resolverAddr, string memory name, address addr) public {
+        bytes32 node = _evalNode(name);
+        setAddr(resolverAddr, node, addr);
+    }
+
+    function setAddr(address resolverAddr, string memory name, uint256 coinType, address addr) public {
+        bytes32 node = _evalNode(name);
+        setAddr(resolverAddr, node, coinType, addr);
+    }
+
+    function addr(address resolverAddr, string memory name) public returns (address payable) {
+        bytes32 node = _evalNode(name);
+        return addr(resolverAddr, node);
+    }
+
+    function addr(address resolverAddr, string memory name, uint256 coinType) public returns (address payable) {
+        bytes32 node = _evalNode(name);
+        return addr(resolverAddr, node, coinType);
+    }
+}
