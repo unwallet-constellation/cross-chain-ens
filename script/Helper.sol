@@ -108,4 +108,16 @@ contract Helper {
             return (routerPolygonMumbai, linkPolygonMumbai, wmaticPolygonMumbai, ccipChainIdPolygonMumbai);
         }
     }
+
+    function labelHash(string memory label) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(label));
+    }
+
+    function namehash(string memory label) public pure returns (bytes32) {
+        return namehash(0x00, label);
+    }
+
+    function namehash(bytes32 node, string memory label) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(node, labelHash(label)));
+    }
 }

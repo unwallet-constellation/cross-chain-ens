@@ -16,18 +16,6 @@ import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkT
 contract DeployHub is Script, Helper {
     address internal senderPublicKey;
 
-    function labelHash(string memory label) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked(label));
-    }
-
-    function namehash(string memory label) internal pure returns (bytes32) {
-        return namehash(0x00, label);
-    }
-
-    function namehash(bytes32 node, string memory label) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked(node, labelHash(label)));
-    }
-
     function deploy_ENSRegistryCCIP(address router) internal returns (ENSRegistryCCIP registry) {
         registry = new ENSRegistryCCIP(router);
         console.log("ENSRegistryCCIP deployed with address: ", address(registry));
@@ -82,10 +70,10 @@ contract DeployHub is Script, Helper {
         ENSRegistryCCIP registry = deploy_ENSRegistryCCIP(router);
         // solhint-disable-next-line no-unused-vars
         FIFSRegistrarCCIP registrar = deploy_FIFSRegistrarCCIP(registry, labelHash(tld), router);
-        ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
-        // solhint-disable-next-line no-unused-vars
-        PublicResolverCCIP resolver =
-            deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
+        // ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
+        // // solhint-disable-next-line no-unused-vars
+        // PublicResolverCCIP resolver =
+        //     deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
 
         vm.stopBroadcast();
     }
