@@ -21,11 +21,13 @@ contract DeployHub is Script, Helper {
         console.log("ENSRegistryCCIP deployed with address: ", address(registry));
     }
 
-    function deploy_FIFSRegistrarCCIP(ENSRegistryCCIP registry, bytes32 labelhash, address router)
+    function deploy_FIFSRegistrarCCIP(ENSRegistryCCIP registry, string memory tld, address router)
         internal
         returns (FIFSRegistrarCCIP registrar)
     {
-        registrar = new FIFSRegistrarCCIP(registry, labelhash, router);
+        bytes32 labelhash = labelHash(tld);
+        bytes32 node = namehash(0x00, labelhash);
+        registrar = new FIFSRegistrarCCIP(registry, node, router);
 
         registry.setSubnodeOwner(0x00, labelhash, address(registrar));
 
@@ -69,7 +71,7 @@ contract DeployHub is Script, Helper {
 
         ENSRegistryCCIP registry = deploy_ENSRegistryCCIP(router);
         // solhint-disable-next-line no-unused-vars
-        FIFSRegistrarCCIP registrar = deploy_FIFSRegistrarCCIP(registry, labelHash(tld), router);
+        FIFSRegistrarCCIP registrar = deploy_FIFSRegistrarCCIP(registry, tld, router);
         ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
         // solhint-disable-next-line no-unused-vars
         PublicResolverCCIP resolver =

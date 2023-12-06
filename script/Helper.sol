@@ -118,6 +118,10 @@ contract Helper {
     }
 
     function namehash(bytes32 node, string memory label) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(node, labelHash(label)));
+        return namehash(node, labelHash(label));
+    }
+
+    function namehash(bytes32 node, bytes32 labelhash) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(node, labelhash));
     }
 }
