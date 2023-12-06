@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -eu
 
-DRY_RUN=0
-if [ -n "${1-}" ] && [ "$1" == "--dry-run" ]; then
-  DRY_RUN=1
-fi
+
+########################
+##       PARAMS       ##
+########################
 
 ### Hub ###
 HUB_CHAIN_ID=43113
@@ -13,6 +13,40 @@ HUB_RPC_URL=avalancheFuji
 ### Spokes ###
 SPOKE_CHAIN_IDS=(80001 420)
 SPOKE_RPC_URLS=(polygonMumbai optimismGoerli)
+
+
+########################
+##       CHECKS       ##
+########################
+
+# Check bash version
+if (( ${BASH_VERSION%%.*} < 4 )); then
+  echo "Error: Bash version 4 or later is required (see README.md)" >&2
+  exit 1
+fi
+
+# Check if `jq` is installed
+if ! command -v jq &> /dev/null; then
+  echo "Error: jq is required (see README.md)" >&2
+  exit 1
+fi
+
+# Check if `forge` is installed
+if ! command -v forge &> /dev/null; then
+  echo "Error: forge is required (see README.md)" >&2
+  exit 1
+fi
+
+# Parse arguments
+DRY_RUN=0
+if [ -n "${1-}" ] && [ "$1" == "--dry-run" ]; then
+  DRY_RUN=1
+fi
+
+
+########################
+##       SCRIPT       ##
+########################
 
 # Helper to get deployed contract addresses from the run-latest.json file created by forge
 declare -A contractAddresses
