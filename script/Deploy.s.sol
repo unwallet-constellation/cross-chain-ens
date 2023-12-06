@@ -70,10 +70,10 @@ contract DeployHub is Script, Helper {
         ENSRegistryCCIP registry = deploy_ENSRegistryCCIP(router);
         // solhint-disable-next-line no-unused-vars
         FIFSRegistrarCCIP registrar = deploy_FIFSRegistrarCCIP(registry, labelHash(tld), router);
-        // ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
-        // // solhint-disable-next-line no-unused-vars
-        // PublicResolverCCIP resolver =
-        //     deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
+        ReverseRegistrarCCIP reverseRegistrar = deploy_ReverseRegistrarCCIP(registry, router);
+        // solhint-disable-next-line no-unused-vars
+        PublicResolverCCIP resolver =
+            deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
 
         vm.stopBroadcast();
     }

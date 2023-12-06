@@ -36,9 +36,9 @@ contract RegisterName is Script, Helper {
         vm.stopBroadcast();
     }
 
-    function register(address registrarAddr, bytes32 label, address owner) public soloRun {
+    function register(address registrarAddr, string memory label, address owner) public soloRun {
         IRegistrar registrar = IRegistrar(registrarAddr);
-        registrar.register(label, owner);
+        registrar.register(labelHash(label), owner);
     }
 
     function setAddr(address resolverAddr, bytes32 node, address addr) public soloRun {
