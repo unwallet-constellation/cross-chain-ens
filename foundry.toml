@@ -12,15 +12,17 @@ fs_permissions = [{ access = "read", path = "./" }]
 
 [rpc_endpoints]
 ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"
-optimismGoerli = "${OPTIMISM_GOERLI_RPC_URL}"
 avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
 arbitrumTestnet = "${ARBITRUM_TESTNET_RPC_URL}"
 polygonMumbai = "${POLYGON_MUMBAI_RPC_URL}"
+optimismGoerli = "${OPTIMISM_GOERLI_RPC_URL}"
+baseGoerli = "${BASE_GOERLI_RPC_URL}"
 
 [etherscan]
 avalancheFuji = { key = "verifyContract", url = "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan", chain = 43113 }
-optimismGoerli = { key = "${ETHERSCAN_OPTIMISM_GOERLI_KEY}", url = "https://api-goerli-optimistic.etherscan.io/api", chain = 420 }
 polygonMumbai = { key = "${POLYGONSCAN_KEY}", url = "https://api-testnet.polygonscan.com/api", chain = 80001 }
+optimismGoerli = { key = "${ETHERSCAN_OPTIMISM_GOERLI_KEY}", url = "https://api-goerli-optimistic.etherscan.io/api", chain = 420 }
+baseGoerli = { key = "PLACEHOLDER_STRING", url = "https://api-goerli.basescan.org/api", chain = 84531 }
 
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
