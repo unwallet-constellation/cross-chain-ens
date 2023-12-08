@@ -77,6 +77,8 @@ contract DeployHub is Script, Helper {
         PublicResolverCCIP resolver =
             deploy_PublicResolverCCIP(60, registry, senderPublicKey, address(reverseRegistrar), router);
 
+        reverseRegistrar.setDefaultResolver(address(resolver));
+
         vm.stopBroadcast();
     }
 }
