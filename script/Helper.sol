@@ -9,7 +9,9 @@ contract Helper {
         ARBITRUM_GOERLI,
         POLYGON_MUMBAI,
         OPTIMISM_GOERLI,
-        BASE_GOERLI
+        BASE_GOERLI,
+        OPTIMISM_SEPOLIA,
+        BASE_SEPOLIA
     }
 
     mapping(SupportedNetworks enumValue => string humanReadableName) public networks;
@@ -28,6 +30,8 @@ contract Helper {
     uint64 constant ccipChainIdPolygonMumbai = 12532609583862916517;
     uint64 constant ccipChainIdOptimismGoerli = 2664363617261496610;
     uint64 constant ccipChainIdBaseGoerli = 5790810961207155433;
+    uint64 constant ccipChainIdOptimismSepolia = TODO;
+    uint64 constant ccipChainIdBaseSepolia = TODO;
 
     // Router addresses
     address constant routerEthereumSepolia = 0xD0daae2231E9CB96b94C8512223533293C3693Bf;
@@ -36,6 +40,8 @@ contract Helper {
     address constant routerPolygonMumbai = 0x70499c328e1E2a3c41108bd3730F6670a44595D1;
     address constant routerOptimismGoerli = 0xEB52E9Ae4A9Fb37172978642d4C141ef53876f26;
     address constant routerBaseGoerli = 0xA8C0c11bf64AF62CDCA6f93D3769B88BdD7cb93D;
+    address constant routerOptimismSepolia = TODO;
+    address constant routerBaseSepolia = TODO;
 
     // Link addresses (can be used as fee)
     address constant linkEthereumSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
@@ -44,6 +50,8 @@ contract Helper {
     address constant linkPolygonMumbai = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB;
     address constant linkOptimismGoerli = 0xdc2CC710e42857672E7907CF474a69B63B93089f;
     address constant linkBaseGoerli = 0x6D0F8D488B669aa9BA2D0f0b7B75a88bf5051CD3;
+    address constant linkOptimismSepolia = TODO;
+    address constant linkBaseSepolia = TODO;
 
     // Wrapped native addresses
     address constant wethEthereumSepolia = 0x097D90c9d3E0B50Ca60e1ae45F6A81010f9FB534;
@@ -52,6 +60,8 @@ contract Helper {
     address constant wmaticPolygonMumbai = 0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889;
     address constant wethOptimismGoerli = 0x4200000000000000000000000000000000000006;
     address constant wethBaseGoerli = 0x4200000000000000000000000000000000000006;
+    address constant wethOptimismSepolia = TODO;
+    address constant wethBaseSepolia = TODO;
 
     // CCIP-BnM addresses
     address constant ccipBnMEthereumSepolia = 0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05;
@@ -60,6 +70,8 @@ contract Helper {
     address constant ccipBnMPolygonMumbai = 0xf1E3A5842EeEF51F2967b3F05D45DD4f4205FF40;
     address constant ccipBnMOptimismGoerli = 0xaBfE9D11A2f1D61990D1d253EC98B5Da00304F16;
     address constant ccipBnMBaseGoerli = 0xbf9036529123DE264bFA0FC7362fE25B650D4B16;
+    address constant ccipBnMOptimismSepolia = TODO;
+    address constant ccipBnMBaseSepolia = TODO;
 
     // CCIP-LnM addresses
     address constant ccipLnMEthereumSepolia = 0x466D489b6d36E7E3b824ef491C225F5830E81cC1;
@@ -68,6 +80,8 @@ contract Helper {
     address constant clCcipLnMPolygonMumbai = 0xc1c76a8c5bFDE1Be034bbcD930c668726E7C1987;
     address constant clCcipLnMOptimismGoerli = 0x835833d556299CdEC623e7980e7369145b037591;
     address constant clCcipLnMBaseGoerli = 0x73ed16c1a61b098fd6924CCE5cC6a9A30348D944;
+    address constant clCcipLnMOptimismSepolia = TODO;
+    address constant clCcipLnMBaseSepolia = TODO;
 
     constructor() {
         // Assigning humanReadableName's
@@ -77,6 +91,8 @@ contract Helper {
         networks[SupportedNetworks.POLYGON_MUMBAI] = "Polygon Mumbai";
         networks[SupportedNetworks.OPTIMISM_GOERLI] = "Optimism Goerli";
         networks[SupportedNetworks.BASE_GOERLI] = "Base Goerli";
+        networks[SupportedNetworks.OPTIMISM_SEPOLIA] = "Optimism SEPOLIA";
+        networks[SupportedNetworks.BASE_SEPOLIA] = "Base SEPOLIA";
 
         // Assigning officialChainId's
         chainIds[SupportedNetworks.ETHEREUM_SEPOLIA] = 11155111;
@@ -85,6 +101,8 @@ contract Helper {
         chainIds[SupportedNetworks.POLYGON_MUMBAI] = 80001;
         chainIds[SupportedNetworks.OPTIMISM_GOERLI] = 420;
         chainIds[SupportedNetworks.BASE_GOERLI] = 84531;
+        chainIds[SupportedNetworks.OPTIMISM_SEPOLIA] = 11155420;
+        chainIds[SupportedNetworks.BASE_SEPOLIA] = 84532;
     }
 
     function getDummyTokensFromNetwork(uint64 officialChainId) internal returns (address ccipBnM, address ccipLnM) {
@@ -100,6 +118,10 @@ contract Helper {
             return (ccipBnMOptimismGoerli, clCcipLnMOptimismGoerli);
         } else if (officialChainId == chainIds[SupportedNetworks.BASE_GOERLI]) {
             return (ccipBnMBaseGoerli, clCcipLnMBaseGoerli);
+        } else if (officialChainId == chainIds[SupportedNetworks.OPTIMISM_SEPOLIA]) {
+            return (ccipBnMOptimismSepolia, clCcipLnMOptimismSepolia);
+        } else if (officialChainId == chainIds[SupportedNetworks.BASE_SEPOLIA]) {
+            return (ccipBnMBaseSepolia, clCcipLnMBaseSepolia);
         }
     }
 
@@ -119,6 +141,10 @@ contract Helper {
             return (routerOptimismGoerli, linkOptimismGoerli, wethOptimismGoerli, ccipChainIdOptimismGoerli);
         } else if (officialChainId == chainIds[SupportedNetworks.BASE_GOERLI]) {
             return (routerBaseGoerli, linkBaseGoerli, wethBaseGoerli, ccipChainIdBaseGoerli);
+        } else if (officialChainId == chainIds[SupportedNetworks.OPTIMISM_SEPOLIA]) {
+            return (routerOptimismSepolia, linkOptimismSepolia, wethOptimismSepolia, ccipChainIdOptimismSepolia);
+        } else if (officialChainId == chainIds[SupportedNetworks.BASE_SEPOLIA]) {
+            return (routerBaseSepolia, linkBaseSepolia, wethBaseSepolia, ccipChainIdBaseSepolia);
         }
     }
 

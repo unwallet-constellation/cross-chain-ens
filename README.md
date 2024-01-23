@@ -1,4 +1,3 @@
-
 # Unwallet.me – Cross-Chain ENS Contracts (CCIP)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -38,7 +37,7 @@ Create a new file by copying the `.env.example` file, and name it `.env`. Fill i
 ```shell
 PRIVATE_KEY=""
 
-ETHERSCAN_OPTIMISM_GOERLI_KEY=""
+ETHERSCAN_OPTIMISM_KEY=""
 POLYGONSCAN_KEY=""
 
 ETHEREUM_SEPOLIA_RPC_URL="https://ethereum-sepolia.publicnode.com"
@@ -47,6 +46,8 @@ ARBITRUM_TESTNET_RPC_URL="https://arbitrum-goerli.publicnode.com"
 POLYGON_MUMBAI_RPC_URL="https://polygon-mumbai-bor.publicnode.com"
 OPTIMISM_GOERLI_RPC_URL="https://optimism-goerli.publicnode.com"
 BASE_GOERLI_RPC_URL="https://base-goerli.publicnode.com"
+BASE_SEPOLIA_RPC_URL="https://base-sepolia.publicnode.com"
+OPTIMISM_SEPOLIA_RPC_URL="https://optimism-sepolia.publicnode.com"
 ```
 
 Once that is done, to load the variables in the `.env` file, run the following command:
@@ -55,7 +56,7 @@ Once that is done, to load the variables in the `.env` file, run the following c
 source .env
 ```
 
-## Deploy 
+## Deploy
 
 > [!INFO]  
 > Make sure to claim testnet gas from all respective chains and `LINK` tokens from this [faucet](https://docs.chain.link/resources/link-token-contracts?parent=ccip) on the respective spoke chains with your deployer account first.

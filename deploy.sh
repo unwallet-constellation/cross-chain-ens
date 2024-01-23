@@ -11,8 +11,8 @@ HUB_CHAIN_ID=43113
 HUB_RPC_URL=avalancheFuji
 
 ### Spokes ###
-SPOKE_CHAIN_IDS=(84531 80001 420)
-SPOKE_RPC_URLS=(baseGoerli polygonMumbai optimismGoerli)
+SPOKE_CHAIN_IDS=(84532 11155420 80001)
+SPOKE_RPC_URLS=(baseSepolia optimismSepolia polygonMumbai)
 
 ### Smart Contracts ###
 declare -a HUB_CONTRACT_NAMES=("ENSRegistryCCIP" "FIFSRegistrarCCIP" "ReverseRegistrarCCIP" "PublicResolverCCIP")
