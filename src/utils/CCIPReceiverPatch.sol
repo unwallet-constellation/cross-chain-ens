@@ -8,7 +8,7 @@ import {IAny2EVMMessageReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/i
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 
 import {IERC165} from
-    "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/utils/introspection/IERC165.sol";
+    "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/contracts/utils/introspection/IERC165.sol";
 
 /// @title CCIPReceiver - Base contract for CCIP applications that can receive messages.
 abstract contract CCIPReceiver is IAny2EVMMessageReceiver, IERC165 {

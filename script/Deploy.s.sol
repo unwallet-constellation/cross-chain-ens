@@ -11,7 +11,7 @@ import {xcENSRegistry} from "../src/spoke/xcENSRegistry.sol";
 import {xcFIFSRegistrar} from "../src/spoke/xcFIFSRegistrar.sol";
 import {xcReverseRegistrar} from "../src/spoke/xcReverseRegistrar.sol";
 import {xcPublicResolver} from "../src/spoke/xcPublicResolver.sol";
-import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
 
 contract DeployHub is Script, Helper {
     address internal senderPublicKey;

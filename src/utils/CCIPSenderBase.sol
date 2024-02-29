@@ -5,7 +5,7 @@ pragma solidity >=0.8.4;
 import "@openzeppelin/contracts/utils/Context.sol";
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
-import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
 
 abstract contract CCIPSenderBase is Context {
     IRouterClient public router;
@@ -20,11 +20,11 @@ abstract contract CCIPSenderBase is Context {
     }
 
     // Event emitted when a message is sent to another chain.
+    // The chain selector of the destination chain.
+    // The address of the receiver on the destination chain.
+    // The message being sent.
+    // The fees paid for sending the message.
     event MessageSent( // The unique ID of the message.
-        // The chain selector of the destination chain.
-        // The address of the receiver on the destination chain.
-        // The message being sent.
-        // The fees paid for sending the message.
         bytes32 indexed messageId,
         uint64 indexed destinationChainSelector,
         address receiver,
@@ -54,7 +54,7 @@ abstract contract CCIPSenderBase is Context {
             receiver: abi.encode(receiverAddress),
             data: abi.encode(ccipPayload),
             tokenAmounts: new Client.EVMTokenAmount[](0), // Empty array indicating no tokens are being sent
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: _gasLimit, strict: false})),
+            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: _gasLimit})),
             feeToken: feeToken // zero address indicates native asset will be used for fees
         });
 
