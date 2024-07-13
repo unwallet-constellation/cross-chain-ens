@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "JuanBlanco.solidity",
-    "mikestead.dotenv",
+    "dotenv.dotenv-vscode",
     "usernamehw.errorlens"
   ]
 }

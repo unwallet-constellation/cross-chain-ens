@@ -9,6 +9,8 @@
 
 These are the contracts for the _[Unwallet.me](https://unwallet.me/)_ hackathon project at [Chainlink Constellation 2023](https://chain.link/hackathon). The repository is based on the [Chainlink CCIP Foundry Starter Kit](https://github.com/smartcontractkit/ccip-starter-kit-foundry).
 
+Created by [Nimish](https://github.com/realnimish), [Mike](https://twitter.com/mike1third), [Dennis](https://zoma.dev), and [Peter](https://dribbble.com/goroh).
+
 ## Architecture Diagram
 
 <img src="https://cdn.discordapp.com/attachments/1182275401817526403/1182377339385028730/image.png?ex=658479b5&is=657204b5&hm=f95cdd5d0cafb6f58dc6d488e355591abb885a3b73b858b1f797858b971bde6b&" width="500px" height="500px" alt="Architecture Diagram" />
@@ -42,7 +44,7 @@ POLYGONSCAN_KEY=""
 
 ETHEREUM_SEPOLIA_RPC_URL="https://ethereum-sepolia.publicnode.com"
 AVALANCHE_FUJI_RPC_URL="https://avalanche-fuji-c-chain.publicnode.com"
-POLYGON_MUMBAI_RPC_URL="https://polygon-mumbai-bor.publicnode.com"
+# POLYGON_MUMBAI_RPC_URL="https://polygon-mumbai-bor.publicnode.com"
 BASE_SEPOLIA_RPC_URL="https://base-sepolia.publicnode.com"
 OPTIMISM_SEPOLIA_RPC_URL="https://optimism-sepolia.publicnode.com"
 ```

@@ -13,13 +13,13 @@ fs_permissions = [{ access = "read", path = "./" }]
 [rpc_endpoints]
 ethereumSepolia = "${ETHEREUM_SEPOLIA_RPC_URL}"
 avalancheFuji = "${AVALANCHE_FUJI_RPC_URL}"
-polygonMumbai = "${POLYGON_MUMBAI_RPC_URL}"
+# polygonMumbai = "${POLYGON_MUMBAI_RPC_URL}"
 optimismSepolia = "${OPTIMISM_SEPOLIA_RPC_URL}"
 baseSepolia = "${BASE_SEPOLIA_RPC_URL}"
 
 [etherscan]
 avalancheFuji = { key = "verifyContract", url = "https://api.routescan.io/v2/network/testnet/evm/43113/etherscan", chain = 43113 }
-polygonMumbai = { key = "${POLYGONSCAN_KEY}", url = "https://api-testnet.polygonscan.com/api", chain = 80001 }
+# polygonMumbai = { key = "${POLYGONSCAN_KEY}", url = "https://api-testnet.polygonscan.com/api", chain = 80001 }
 optimismSepolia = { key = "${ETHERSCAN_OPTIMISM_KEY}", url = "https://api-sepolia-optimistic.etherscan.io/api", chain = 11155420 }
 baseSepolia = { key = "PLACEHOLDER_STRING", url = "https://api-sepolia.basescan.org/api", chain = 84532 }
 
